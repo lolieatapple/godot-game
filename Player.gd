@@ -97,8 +97,26 @@ func take_damage(amount: float) -> void:
 	# Emit signal for UI update
 	health_changed.emit(health, max_health)
 
+	# 触发受伤效果
+	trigger_damage_effects()
+
 	if health <= 0:
 		die()
+
+func trigger_damage_effects() -> void:
+	"""触发受伤时的视觉效果"""
+	# 相机震动
+	if camera and camera.has_method("shake"):
+		camera.shake(8.0, 0.3)  # 强度: 8.0, 持续时间: 0.3秒
+
+	# 显示红色伤害遮罩
+	var game_ui = get_tree().get_first_node_in_group("GameUI")
+	if game_ui == null:
+		# 如果没有组，尝试通过节点路径查找
+		game_ui = get_node_or_null("/root/Main/GameUI")
+
+	if game_ui and game_ui.has_method("show_damage_effect"):
+		game_ui.show_damage_effect()
 
 func die() -> void:
 	print("Game Over")

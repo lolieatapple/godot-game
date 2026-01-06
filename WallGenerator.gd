@@ -2,12 +2,13 @@
 extends EditorScript
 
 # 配置参数
-@export var num_wall_groups: int = 10  # 生成多少组墙
-@export var min_wall_length: int = 4  # 最小墙长度
-@export var max_wall_length: int = 12  # 最大墙长度
-@export var min_distance_from_center: float = 15.0  # 距离中心的最小距离
-@export var max_distance_from_center: float = 40.0  # 距离中心的最大距离
-@export var min_wall_spacing: int = 3  # 墙之间的最小间距
+@export var num_wall_groups: int = 25  # 生成多少组墙
+@export var min_wall_length: int = 5  # 最小墙长度
+@export var max_wall_length: int = 15  # 最大墙长度
+@export var wall_thickness: int = 3  # 墙的厚度（格数）
+@export var min_distance_from_center: float = 12.0  # 距离中心的最小距离
+@export var max_distance_from_center: float = 45.0  # 距离中心的最大距离
+@export var min_wall_spacing: int = 2  # 墙之间的最小间距
 
 func _run() -> void:
 	var scene_root = get_scene()
@@ -115,25 +116,38 @@ func generate_wall_segment(wall_layer: TileMapLayer, tile_variants: Array, exist
 	var cells_to_place: Array = []
 
 	match wall_type:
-		0:  # 水平墙
+		0:  # 水平墙（厚度为垂直方向）
 			for j in range(wall_length):
-				cells_to_place.append(start_pos + Vector2i(j, 0))
-		1:  # 垂直墙
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(j, thickness))
+		1:  # 垂直墙（厚度为水平方向）
 			for j in range(wall_length):
-				cells_to_place.append(start_pos + Vector2i(0, j))
-		2:  # L形墙
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(thickness, j))
+		2:  # L形墙（加厚）
 			var half_length = wall_length / 2
-			for j in range(half_length):
-				cells_to_place.append(start_pos + Vector2i(j, 0))
-			for j in range(half_length):
-				cells_to_place.append(start_pos + Vector2i(half_length - 1, j))
-		3:  # U形墙
+			# 水平部分
+			for j in range(half_length + wall_thickness):
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(j, thickness))
+			# 垂直部分
+			for j in range(wall_thickness, half_length):
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(thickness, j))
+		3:  # U形墙（加厚）
 			var third_length = wall_length / 3
+			# 底部横条
 			for j in range(wall_length):
-				cells_to_place.append(start_pos + Vector2i(j, 0))
-			for j in range(1, third_length):
-				cells_to_place.append(start_pos + Vector2i(0, j))
-				cells_to_place.append(start_pos + Vector2i(wall_length - 1, j))
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(j, thickness))
+			# 左侧竖条
+			for j in range(wall_thickness, third_length):
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(thickness, j))
+			# 右侧竖条
+			for j in range(wall_thickness, third_length):
+				for thickness in range(wall_thickness):
+					cells_to_place.append(start_pos + Vector2i(wall_length - wall_thickness + thickness, j))
 
 	# 检查所有位置是否有效
 	for cell_pos in cells_to_place:

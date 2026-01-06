@@ -2,8 +2,11 @@ extends CanvasLayer
 
 @onready var health_bar: ProgressBar = $HealthBar
 @onready var score_label: Label = $ScoreLabel
+@onready var damage_overlay: ColorRect = $DamageOverlay
 
 var score: int = 0
+var damage_overlay_alpha: float = 0.0
+var damage_fade_speed: float = 2.0
 
 func _ready() -> void:
 	# Connect to player signals
@@ -42,3 +45,22 @@ func _on_player_health_changed(new_health: float, max_health: float) -> void:
 func _on_zombie_killed(points: int) -> void:
 	score += points
 	score_label.text = "Score: " + str(score)
+
+func _process(delta: float) -> void:
+	# 伤害遮罩渐隐效果
+	if damage_overlay_alpha > 0:
+		damage_overlay_alpha -= damage_fade_speed * delta
+		damage_overlay_alpha = max(damage_overlay_alpha, 0)
+
+		if damage_overlay_alpha > 0:
+			damage_overlay.visible = true
+			var overlay_color = damage_overlay.color
+			overlay_color.a = damage_overlay_alpha
+			damage_overlay.color = overlay_color
+		else:
+			damage_overlay.visible = false
+
+func show_damage_effect() -> void:
+	"""显示伤害效果（红色遮罩）"""
+	damage_overlay_alpha = 0.5
+	damage_overlay.visible = true
