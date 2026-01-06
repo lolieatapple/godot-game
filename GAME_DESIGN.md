@@ -1,0 +1,1 @@
+Project: Top-down Pixel Zombie Shooter Style: 2D, Pixel Art Mechanics: WASD movement, Mouse aim, Left click shoot. Entities: Player, Zombie (follows player), Bullet.
