@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://c5vyu2qn8pbxd"]
+[gd_scene load_steps=6 format=3 uid="uid://c5vyu2qn8pbxd"]
 
 [ext_resource type="Script" path="res://Player.gd" id="1_1a2b3"]
 [ext_resource type="Texture2D" uid="uid://cqhssfho21g4h" path="res://assets/Man Blue/manBlue_gun.png" id="2_3c4d5"]
@@ -11,11 +11,39 @@ height = 40.0
 radius = 15.0
 height = 43.0
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_player"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3c4d5")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3c4d5")
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3c4d5")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
 [node name="Player" type="CharacterBody2D" groups=["Player"]]
 script = ExtResource("1_1a2b3")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_3c4d5")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_player")
+animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_1a2b3")

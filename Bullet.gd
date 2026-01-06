@@ -11,10 +11,15 @@ func _physics_process(delta: float) -> void:
 	position += direction * speed * delta
 
 func _on_body_entered(body: Node2D) -> void:
-	# Hit something, remove the bullet
+	# Hit something, check what it is
 	if body.is_in_group("Zombie"):
-		body.queue_free()  # Kill the zombie
-	queue_free()  # Remove the bullet
+		# Hit a zombie, kill it
+		if body.has_method("die"):
+			body.die()  # Call zombie's die method to emit signal
+		else:
+			body.queue_free()  # Fallback
+	# Remove the bullet regardless of what it hit (zombie or wall)
+	queue_free()
 
 func _on_screen_exited() -> void:
 	# Remove bullet when it leaves the screen

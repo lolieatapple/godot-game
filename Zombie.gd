@@ -1,9 +1,12 @@
 extends CharacterBody2D
 
+signal zombie_killed(points: int)
+
 @export var speed: float = 150.0
 @export var attack_range: float = 20.0
 @export var damage: float = 10.0
 @export var attack_cooldown: float = 1.0
+@export var score_value: int = 10
 
 var player: CharacterBody2D = null
 var can_attack: bool = true
@@ -69,3 +72,8 @@ func attack_player() -> void:
 	# Deal damage to player
 	if player.has_method("take_damage"):
 		player.take_damage(damage)
+
+func die() -> void:
+	# Emit signal before dying
+	zombie_killed.emit(score_value)
+	queue_free()

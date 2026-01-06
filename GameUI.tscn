@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnk8vyu4ro2qg"]
+
+[ext_resource type="Script" path="res://GameUI.gd" id="1_gameui"]
+
+[node name="GameUI" type="CanvasLayer"]
+script = ExtResource("1_gameui")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 320.0
+offset_bottom = 47.0
+value = 100.0
+show_percentage = false
+
+[node name="ScoreLabel" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 200.0
+offset_bottom = 86.0
+text = "Score: 0"
