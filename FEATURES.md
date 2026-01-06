@@ -73,7 +73,18 @@
 **可调参数**：
 - `damage_fade_speed: 2.0` - 伤害遮罩渐隐速度
 
-### 7. 地图系统 (Main.tscn)
+### 7. 暂停菜单系统 (PauseMenu.gd / PauseMenu.tscn)
+- **暂停/继续**：按 ESC 键切换暂停状态
+- **重新开始**：从暂停菜单重启游戏
+- **退出游戏**：退出到桌面
+- **暂停时冻结**：使用 `process_mode = 3` 确保暂停菜单不受影响
+- **UI 显示**：半透明背景面板，居中菜单
+
+**按键**：
+- `ESC` - 打开/关闭暂停菜单
+- 暂停时游戏完全冻结（僵尸、玩家、计时器等）
+
+### 8. 地图系统 (Main.tscn)
 - **地板层**：使用 TileMapLayer
 - **墙体层**：3格厚墙体，带碰撞检测
 - **物理层配置**：
@@ -82,7 +93,7 @@
   - Layer 3: 僵尸
   - Layer 4: 玩家
 
-### 8. 墙体生成工具 (WallGenerator.gd)
+### 9. 墙体生成工具 (WallGenerator.gd)
 - **智能分析**：自动识别现有墙体样式
 - **多种形状**：水平、垂直、L形、U形墙
 - **厚度控制**：墙体厚度3格
@@ -130,6 +141,7 @@ signal zombie_killed(points: int)
 - `move_right` - D键 (物理键码68)
 - `move_up` - W键 (物理键码87)
 - `move_down` - S键 (物理键码83)
+- `ui_cancel` - ESC键 (物理键码4194305) - 暂停菜单
 - 射击 - 鼠标左键 (代码直接检测)
 
 ## 物理层设置
@@ -156,6 +168,7 @@ signal zombie_killed(points: int)
 ├── EnemySpawner.gd        # 敌人生成器（无scene）
 ├── CameraShake.gd         # 相机震动脚本（附加到Camera2D）
 ├── GameUI.gd/tscn         # UI系统
+├── PauseMenu.gd/tscn      # 暂停菜单系统
 ├── WallGenerator.gd       # 墙体生成工具（编辑器脚本）
 └── assets/                # 游戏资源
 	├── Tilesheet/         # 瓦片图集
@@ -178,7 +191,7 @@ godot .
 - [ ] 音效系统（射击、受伤、死亡音效）
 - [ ] 道具系统（生命包、弹药）
 - [ ] 波次系统（难度递增）
-- [ ] 暂停菜单
+- [x] 暂停菜单 ✅ 已完成
 - [ ] 最高分记录
 - [ ] 多种敌人类型
 - [ ] 玩家升级系统

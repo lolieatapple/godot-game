@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=4 uid="uid://buw14ru6appak"]
+[gd_scene load_steps=10 format=4 uid="uid://buw14ru6appak"]
 
 [ext_resource type="PackedScene" uid="uid://c5vyu2qn8pbxd" path="res://Player.tscn" id="1_main"]
 [ext_resource type="PackedScene" path="res://Zombie.tscn" id="2_zombie"]
 [ext_resource type="Script" uid="uid://bqv6vxf52i3dr" path="res://EnemySpawner.gd" id="3_spawner"]
 [ext_resource type="Script" uid="uid://btejp0432lylg" path="res://CameraShake.gd" id="4_camera"]
+[ext_resource type="PackedScene" uid="uid://bx8y5kqm3pn0r" path="res://PauseMenu.tscn" id="7_pause"]
 [ext_resource type="Texture2D" uid="uid://dqgrol3r1ej2k" path="res://assets/Tilesheet/tilesheet_complete.png" id="5_fos0i"]
 [ext_resource type="PackedScene" path="res://GameUI.tscn" id="6_gameui"]
 
@@ -611,3 +612,5 @@ zombie_scene = ExtResource("2_zombie")
 [node name="SpawnTimer" type="Timer" parent="EnemySpawner"]
 
 [node name="GameUI" parent="." instance=ExtResource("6_gameui")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("7_pause")]
