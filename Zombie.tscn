@@ -9,7 +9,7 @@ height = 40.0
 
 [node name="Zombie" type="CharacterBody2D" groups=["Zombie"]]
 collision_layer = 4
-collision_mask = 1
+collision_mask = 5
 script = ExtResource("1_zombie")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

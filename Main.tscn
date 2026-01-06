@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b8vyu3qoaqcye"]
+[gd_scene load_steps=5 format=3 uid="uid://b8vyu3qoaqcye"]
 
 [ext_resource type="PackedScene" uid="uid://c5vyu2qn8pbxd" path="res://Player.tscn" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://e0xav5sp2rfyg" path="res://Zombie.tscn" id="2_zombie"]
+[ext_resource type="Script" path="res://EnemySpawner.gd" id="3_spawner"]
+[ext_resource type="Script" path="res://CameraShake.gd" id="4_camera"]
 
 [node name="Main" type="Node2D"]
 
@@ -9,6 +11,7 @@
 position = Vector2(576, 324)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+script = ExtResource("4_camera")
 
 [node name="Zombie" parent="." instance=ExtResource("2_zombie")]
 position = Vector2(800, 324)
@@ -18,3 +21,9 @@ position = Vector2(400, 500)
 
 [node name="Zombie3" parent="." instance=ExtResource("2_zombie")]
 position = Vector2(700, 150)
+
+[node name="EnemySpawner" type="Node2D" parent="."]
+script = ExtResource("3_spawner")
+zombie_scene = ExtResource("2_zombie")
+
+[node name="SpawnTimer" type="Timer" parent="EnemySpawner"]

@@ -2,9 +2,12 @@ extends CharacterBody2D
 
 @export var speed: float = 150.0
 @export var attack_range: float = 20.0
-@export var separation_force: float = 50.0
+@export var damage: float = 10.0
+@export var attack_cooldown: float = 1.0
 
 var player: CharacterBody2D = null
+var can_attack: bool = true
+var attack_timer: float = 0.0
 
 func _ready() -> void:
 	# Find the player
@@ -12,9 +15,23 @@ func _ready() -> void:
 	if players.size() > 0:
 		player = players[0]
 
+	# Connect to player's damage area
+	var player_damage_areas = get_tree().get_nodes_in_group("Player")
+	if player_damage_areas.size() > 0:
+		var player_node = player_damage_areas[0]
+		if player_node.has_node("DamageArea"):
+			var damage_area = player_node.get_node("DamageArea")
+			damage_area.body_entered.connect(_on_player_damage_area_entered)
+
 func _physics_process(delta: float) -> void:
 	if player == null:
 		return
+
+	# Handle attack cooldown
+	if not can_attack:
+		attack_timer -= delta
+		if attack_timer <= 0:
+			can_attack = true
 
 	var distance_to_player = global_position.distance_to(player.global_position)
 
@@ -23,30 +40,32 @@ func _physics_process(delta: float) -> void:
 		var direction = (player.global_position - global_position).normalized()
 		velocity = direction * speed
 
-		# Apply separation from other zombies to prevent overlap
-		var separation = get_separation_vector()
-		velocity += separation * separation_force
-
+		# move_and_slide() automatically handles collision with other CharacterBody2D zombies
 		move_and_slide()
 
 		# Face the player
 		look_at(player.global_position)
 	else:
-		# In attack range, stop moving
+		# In attack range, stop moving and attack
 		velocity = Vector2.ZERO
 		look_at(player.global_position)
 
-func get_separation_vector() -> Vector2:
-	var separation = Vector2.ZERO
-	var nearby_zombies = get_tree().get_nodes_in_group("Zombie")
+		# Attack player if in range and can attack
+		if can_attack:
+			attack_player()
 
-	for zombie in nearby_zombies:
-		if zombie == self:
-			continue
+func _on_player_damage_area_entered(body: Node2D) -> void:
+	# When zombie enters player's damage area, start attacking
+	if body == self and can_attack:
+		attack_player()
 
-		var distance = global_position.distance_to(zombie.global_position)
-		if distance < 30.0 and distance > 0:
-			var direction = (global_position - zombie.global_position).normalized()
-			separation += direction / distance
+func attack_player() -> void:
+	if player == null or not can_attack:
+		return
 
-	return separation
+	can_attack = false
+	attack_timer = attack_cooldown
+
+	# Deal damage to player
+	if player.has_method("take_damage"):
+		player.take_damage(damage)
