@@ -1,0 +1,198 @@
+extends Node
+
+# 关卡配置
+@export var kills_per_level: int = 10
+
+# 当前关卡状态
+var current_level: int = 1
+var current_kills: int = 0
+
+# 信号
+signal level_changed(level: int)
+signal kills_changed(kills: int, required: int)
+signal level_completed(level: int)
+
+# 关卡配色方案
+var level_colors = {
+	1: {
+		"floor": Color(0.15, 0.15, 0.15),       # 深灰色
+		"grid": Color(0.25, 0.25, 0.25),        # 浅灰网格
+		"wall": Color(0.4, 0.3, 0.25),          # 棕灰色
+		"wall_border": Color(0.2, 0.15, 0.1)    # 深棕色边框
+	},
+	2: {
+		"floor": Color(0.1, 0.15, 0.2),         # 深蓝灰色
+		"grid": Color(0.2, 0.25, 0.3),          # 蓝灰网格
+		"wall": Color(0.25, 0.35, 0.45),        # 蓝色墙
+		"wall_border": Color(0.1, 0.2, 0.3)     # 深蓝边框
+	},
+	3: {
+		"floor": Color(0.15, 0.1, 0.15),        # 深紫灰色
+		"grid": Color(0.25, 0.2, 0.25),         # 紫灰网格
+		"wall": Color(0.4, 0.25, 0.35),         # 紫色墙
+		"wall_border": Color(0.2, 0.1, 0.2)     # 深紫边框
+	},
+	4: {
+		"floor": Color(0.15, 0.12, 0.08),       # 深棕色
+		"grid": Color(0.25, 0.2, 0.15),         # 棕色网格
+		"wall": Color(0.45, 0.35, 0.2),         # 土黄色墙
+		"wall_border": Color(0.25, 0.18, 0.1)   # 深土黄边框
+	},
+	5: {
+		"floor": Color(0.08, 0.15, 0.1),        # 深绿灰色
+		"grid": Color(0.15, 0.25, 0.18),        # 绿灰网格
+		"wall": Color(0.2, 0.4, 0.25),          # 绿色墙
+		"wall_border": Color(0.1, 0.2, 0.12)    # 深绿边框
+	},
+	6: {
+		"floor": Color(0.18, 0.08, 0.08),       # 深红灰色
+		"grid": Color(0.28, 0.15, 0.15),        # 红灰网格
+		"wall": Color(0.45, 0.2, 0.2),          # 红色墙
+		"wall_border": Color(0.25, 0.1, 0.1)    # 深红边框
+	},
+	7: {
+		"floor": Color(0.12, 0.12, 0.18),       # 深靛蓝色
+		"grid": Color(0.22, 0.22, 0.3),         # 靛蓝网格
+		"wall": Color(0.3, 0.3, 0.5),           # 靛蓝墙
+		"wall_border": Color(0.15, 0.15, 0.3)   # 深靛蓝边框
+	},
+	8: {
+		"floor": Color(0.18, 0.15, 0.08),       # 深橙棕色
+		"grid": Color(0.28, 0.24, 0.15),        # 橙棕网格
+		"wall": Color(0.5, 0.4, 0.2),           # 橙色墙
+		"wall_border": Color(0.3, 0.22, 0.1)    # 深橙边框
+	},
+	9: {
+		"floor": Color(0.08, 0.12, 0.15),       # 深青灰色
+		"grid": Color(0.15, 0.22, 0.25),        # 青灰网格
+		"wall": Color(0.2, 0.35, 0.4),          # 青色墙
+		"wall_border": Color(0.1, 0.2, 0.25)    # 深青边框
+	},
+	10: {
+		"floor": Color(0.05, 0.05, 0.05),       # 极深灰（最终关）
+		"grid": Color(0.15, 0.15, 0.15),        # 暗灰网格
+		"wall": Color(0.5, 0.5, 0.5),           # 银色墙
+		"wall_border": Color(0.2, 0.2, 0.2)     # 深灰边框
+	}
+}
+
+func _ready():
+	# 连接到所有僵尸的死亡信号
+	get_tree().node_added.connect(_on_node_added)
+
+	# 初始化第一关
+	apply_level_colors()
+
+	# 等待场景完全加载后生成初始迷宫
+	await get_tree().process_frame
+	var maze_generator = get_tree().get_first_node_in_group("MazeGenerator")
+	if maze_generator:
+		maze_generator.generate_maze()
+
+	# 第一关也显示 Ready, Go!
+	await show_level_start_animation()
+
+func _on_node_added(node: Node):
+	# 当新节点加入场景树时，检查是否是僵尸
+	if node.is_in_group("Zombie"):
+		# 连接僵尸的死亡信号
+		if node.has_signal("zombie_killed"):
+			node.zombie_killed.connect(_on_zombie_killed)
+
+func _on_zombie_killed(points: int):
+	current_kills += 1
+	kills_changed.emit(current_kills, kills_per_level)
+
+	# 检查是否完成关卡
+	if current_kills >= kills_per_level:
+		complete_level()
+
+func complete_level():
+	# 暂停游戏
+	get_tree().paused = true
+
+	level_completed.emit(current_level)
+
+	# 等待一小段时间后进入下一关（使用 process_always 模式的计时器）
+	await get_tree().create_timer(2.0, true, false, true).timeout
+
+	# 进入下一关
+	next_level()
+
+func next_level():
+	current_level += 1
+	current_kills = 0
+
+	level_changed.emit(current_level)
+	kills_changed.emit(current_kills, kills_per_level)
+
+	# 应用新关卡颜色
+	apply_level_colors()
+
+	# 清除所有现存僵尸
+	clear_zombies()
+
+	# 显示 Ready, Go! 动画
+	await show_level_start_animation()
+
+func show_level_start_animation():
+	"""显示关卡开始动画：Ready -> Go!"""
+	# 保持暂停状态
+	get_tree().paused = true
+
+	# 获取 GameUI
+	var game_ui = get_tree().get_first_node_in_group("GameUI")
+	if game_ui:
+		# 显示 "Ready"
+		game_ui.show_ready_text()
+		await get_tree().create_timer(1.0, true, false, true).timeout
+
+		# 显示 "Go!"
+		game_ui.show_go_text()
+		await get_tree().create_timer(1.0, true, false, true).timeout
+
+		# 隐藏文字
+		game_ui.hide_start_text()
+
+	# 恢复游戏
+	get_tree().paused = false
+
+func apply_level_colors():
+	# 获取当前关卡的配色（如果超过定义的关卡数，循环使用）
+	var level_key = ((current_level - 1) % level_colors.size()) + 1
+	var colors = level_colors[level_key]
+
+	# 更新地板颜色
+	var floor = get_tree().get_first_node_in_group("Floor")
+	if floor:
+		floor.floor_color = colors["floor"]
+		floor.grid_color = colors["grid"]
+		floor.queue_redraw()
+
+	# 更新所有墙体颜色（外围墙壁）
+	var walls = get_tree().get_nodes_in_group("Wall")
+	for wall in walls:
+		wall.wall_color = colors["wall"]
+		wall.border_color = colors["wall_border"]
+		if wall.has_node("Visual"):
+			wall.get_node("Visual").queue_redraw()
+
+	# 重新生成迷宫墙壁
+	var maze_generator = get_tree().get_first_node_in_group("MazeGenerator")
+	if maze_generator:
+		maze_generator.regenerate_maze()
+
+func clear_zombies():
+	# 清除场景中所有僵尸
+	var zombies = get_tree().get_nodes_in_group("Zombie")
+	for zombie in zombies:
+		zombie.queue_free()
+
+func get_current_level() -> int:
+	return current_level
+
+func get_current_kills() -> int:
+	return current_kills
+
+func get_kills_required() -> int:
+	return kills_per_level

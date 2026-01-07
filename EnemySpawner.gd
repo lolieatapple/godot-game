@@ -6,6 +6,10 @@ extends Node2D
 @export var spawn_distance_max: float = 600.0
 @export var max_spawn_attempts: int = 10
 
+# 地图边界（根据地板和墙体大小设置）
+@export var map_min: Vector2 = Vector2(-980, -980)
+@export var map_max: Vector2 = Vector2(980, 980)
+
 @onready var spawn_timer: Timer = $SpawnTimer
 
 var player: Node2D = null
@@ -64,13 +68,22 @@ func find_valid_spawn_position() -> Vector2:
 	return Vector2.ZERO
 
 func is_position_valid(position: Vector2, space_state: PhysicsDirectSpaceState2D) -> bool:
-	# Create a shape query to check for collisions
-	var query = PhysicsPointQueryParameters2D.new()
-	query.position = position
+	# 首先检查是否在地图边界内
+	if position.x < map_min.x or position.x > map_max.x:
+		return false
+	if position.y < map_min.y or position.y > map_max.y:
+		return false
+
+	# 使用圆形区域检测，确保僵尸周围有足够空间
+	var query = PhysicsShapeQueryParameters2D.new()
+	var shape = CircleShape2D.new()
+	shape.radius = 32.0  # 僵尸半径，确保有足够空间
+	query.shape = shape
+	query.transform = Transform2D(0, position)
 	query.collision_mask = 1  # Check collision with layer 1 (walls/static objects)
 
 	# Query the space
-	var result = space_state.intersect_point(query, 1)
+	var result = space_state.intersect_shape(query, 1)
 
 	# Position is valid if there are no collisions
 	return result.size() == 0
