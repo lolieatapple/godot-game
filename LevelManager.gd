@@ -18,61 +18,71 @@ var level_colors = {
 		"floor": Color(0.15, 0.15, 0.15),       # 深灰色
 		"grid": Color(0.25, 0.25, 0.25),        # 浅灰网格
 		"wall": Color(0.4, 0.3, 0.25),          # 棕灰色
-		"wall_border": Color(0.2, 0.15, 0.1)    # 深棕色边框
+		"wall_border": Color(0.2, 0.15, 0.1),   # 深棕色边框
+		"zombie": Color(0.8, 1.0, 0.8)          # 浅绿色僵尸
 	},
 	2: {
 		"floor": Color(0.1, 0.15, 0.2),         # 深蓝灰色
 		"grid": Color(0.2, 0.25, 0.3),          # 蓝灰网格
 		"wall": Color(0.25, 0.35, 0.45),        # 蓝色墙
-		"wall_border": Color(0.1, 0.2, 0.3)     # 深蓝边框
+		"wall_border": Color(0.1, 0.2, 0.3),    # 深蓝边框
+		"zombie": Color(0.7, 0.8, 1.0)          # 淡蓝色僵尸
 	},
 	3: {
 		"floor": Color(0.15, 0.1, 0.15),        # 深紫灰色
 		"grid": Color(0.25, 0.2, 0.25),         # 紫灰网格
 		"wall": Color(0.4, 0.25, 0.35),         # 紫色墙
-		"wall_border": Color(0.2, 0.1, 0.2)     # 深紫边框
+		"wall_border": Color(0.2, 0.1, 0.2),    # 深紫边框
+		"zombie": Color(1.0, 0.7, 1.0)          # 粉紫色僵尸
 	},
 	4: {
 		"floor": Color(0.15, 0.12, 0.08),       # 深棕色
 		"grid": Color(0.25, 0.2, 0.15),         # 棕色网格
 		"wall": Color(0.45, 0.35, 0.2),         # 土黄色墙
-		"wall_border": Color(0.25, 0.18, 0.1)   # 深土黄边框
+		"wall_border": Color(0.25, 0.18, 0.1),  # 深土黄边框
+		"zombie": Color(1.0, 0.9, 0.6)          # 土黄色僵尸
 	},
 	5: {
 		"floor": Color(0.08, 0.15, 0.1),        # 深绿灰色
 		"grid": Color(0.15, 0.25, 0.18),        # 绿灰网格
 		"wall": Color(0.2, 0.4, 0.25),          # 绿色墙
-		"wall_border": Color(0.1, 0.2, 0.12)    # 深绿边框
+		"wall_border": Color(0.1, 0.2, 0.12),   # 深绿边框
+		"zombie": Color(0.6, 1.0, 0.7)          # 明绿色僵尸
 	},
 	6: {
 		"floor": Color(0.18, 0.08, 0.08),       # 深红灰色
 		"grid": Color(0.28, 0.15, 0.15),        # 红灰网格
 		"wall": Color(0.45, 0.2, 0.2),          # 红色墙
-		"wall_border": Color(0.25, 0.1, 0.1)    # 深红边框
+		"wall_border": Color(0.25, 0.1, 0.1),   # 深红边框
+		"zombie": Color(1.0, 0.6, 0.6)          # 淡红色僵尸
 	},
 	7: {
 		"floor": Color(0.12, 0.12, 0.18),       # 深靛蓝色
 		"grid": Color(0.22, 0.22, 0.3),         # 靛蓝网格
 		"wall": Color(0.3, 0.3, 0.5),           # 靛蓝墙
-		"wall_border": Color(0.15, 0.15, 0.3)   # 深靛蓝边框
+		"wall_border": Color(0.15, 0.15, 0.3),  # 深靛蓝边框
+		"zombie": Color(0.8, 0.8, 1.0)          # 靛蓝色僵尸
 	},
 	8: {
 		"floor": Color(0.18, 0.15, 0.08),       # 深橙棕色
 		"grid": Color(0.28, 0.24, 0.15),        # 橙棕网格
 		"wall": Color(0.5, 0.4, 0.2),           # 橙色墙
-		"wall_border": Color(0.3, 0.22, 0.1)    # 深橙边框
+		"wall_border": Color(0.3, 0.22, 0.1),   # 深橙边框
+		"zombie": Color(1.0, 0.8, 0.5)          # 橙色僵尸
 	},
 	9: {
 		"floor": Color(0.08, 0.12, 0.15),       # 深青灰色
 		"grid": Color(0.15, 0.22, 0.25),        # 青灰网格
 		"wall": Color(0.2, 0.35, 0.4),          # 青色墙
-		"wall_border": Color(0.1, 0.2, 0.25)    # 深青边框
+		"wall_border": Color(0.1, 0.2, 0.25),   # 深青边框
+		"zombie": Color(0.6, 0.9, 1.0)          # 青色僵尸
 	},
 	10: {
 		"floor": Color(0.05, 0.05, 0.05),       # 极深灰（最终关）
 		"grid": Color(0.15, 0.15, 0.15),        # 暗灰网格
 		"wall": Color(0.5, 0.5, 0.5),           # 银色墙
-		"wall_border": Color(0.2, 0.2, 0.2)     # 深灰边框
+		"wall_border": Color(0.2, 0.2, 0.2),    # 深灰边框
+		"zombie": Color(1.0, 1.0, 1.0)          # 白色僵尸（最终关）
 	}
 }
 
@@ -196,3 +206,29 @@ func get_current_kills() -> int:
 
 func get_kills_required() -> int:
 	return kills_per_level
+
+func get_zombie_color() -> Color:
+	"""获取当前关卡的僵尸颜色"""
+	var level_key = ((current_level - 1) % level_colors.size()) + 1
+	var colors = level_colors[level_key]
+	return colors["zombie"]
+
+func get_zombie_stats() -> Dictionary:
+	"""获取当前关卡的僵尸属性（血量和速度）"""
+	# 基础属性
+	var base_health = 50.0
+	var base_speed = 100.0
+
+	# 每关增加的属性
+	var health_per_level = 20.0  # 每关增加20血量
+	var speed_per_level = 15.0   # 每关增加15速度
+
+	# 计算当前关卡的属性
+	var level_multiplier = current_level - 1
+	var current_health = base_health + (health_per_level * level_multiplier)
+	var current_speed = base_speed + (speed_per_level * level_multiplier)
+
+	return {
+		"health": current_health,
+		"speed": current_speed
+	}

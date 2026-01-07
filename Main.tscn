@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://Wall.gd" id="wall_script"]
 [ext_resource type="Script" path="res://LevelManager.gd" id="level_manager_script"]
 [ext_resource type="Script" path="res://MazeGenerator.gd" id="maze_generator_script"]
+[ext_resource type="Script" path="res://Crosshair.gd" id="crosshair_script"]
 [ext_resource type="PackedScene" uid="uid://bx8y5kqm3pn0r" path="res://PauseMenu.tscn" id="7_pause"]
 [ext_resource type="Texture2D" uid="uid://dqgrol3r1ej2k" path="res://assets/Tilesheet/tilesheet_complete.png" id="5_fos0i"]
 [ext_resource type="PackedScene" path="res://GameUI.tscn" id="6_gameui"]
@@ -82,5 +83,8 @@ script = ExtResource("level_manager_script")
 script = ExtResource("maze_generator_script")
 
 [node name="GameUI" parent="." instance=ExtResource("6_gameui")]
+
+[node name="Crosshair" type="Node2D" parent="."]
+script = ExtResource("crosshair_script")
 
 [node name="PauseMenu" parent="." instance=ExtResource("7_pause")]
