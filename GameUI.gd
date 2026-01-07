@@ -12,6 +12,12 @@ var score: int = 0
 var damage_overlay_alpha: float = 0.0
 var damage_fade_speed: float = 2.0
 
+# 对话相关
+@onready var dialogue_panel: Panel = $DialoguePanel
+@onready var dialogue_overlay: ColorRect = $DialogueOverlay
+@onready var dialogue_text: RichTextLabel = $DialoguePanel/DialogueText
+signal dialogue_finished
+
 func _ready() -> void:
 	# Connect to player signals
 	var players = get_tree().get_nodes_in_group("Player")
@@ -122,3 +128,26 @@ func hide_start_text() -> void:
 	"""隐藏开始文字"""
 	if start_label:
 		start_label.visible = false
+
+	# 恢复游戏
+	get_tree().paused = false
+
+func show_dialogue(text: String) -> void:
+	"""显示对话"""
+	if dialogue_panel and dialogue_text:
+		dialogue_text.text = text
+		dialogue_panel.visible = true
+		if dialogue_overlay:
+			dialogue_overlay.visible = true
+		get_tree().paused = true # 暂停游戏
+
+func _input(event: InputEvent) -> void:
+	if dialogue_panel and dialogue_panel.visible:
+		if event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed):
+			# 关闭对话
+			dialogue_panel.visible = false
+			if dialogue_overlay:
+				dialogue_overlay.visible = false
+			dialogue_finished.emit()
+			# 注意：我们不在GameUI里恢复暂停，交给LevelManager控制，
+			# 因为可能后面还有Ready Go动画

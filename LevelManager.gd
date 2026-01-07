@@ -86,6 +86,20 @@ var level_colors = {
 	}
 }
 
+# 关卡剧情对话
+var level_dialogues = {
+	1: "Year 2035. The virus took everything.\nI have the antibodies. I must survive.\nFirst, secure this safehouse.",
+	2: "Supplies are running low.\nI saw a grocery store nearby.\nNeed to find food before I starve.",
+	3: "Thirsty... so thirsty.\nThe city water is contaminated.\nMust find bottled water in the warehouse.",
+	4: "Got a nasty cut on my leg.\nInfection risk is high.\nNeed antibiotics from the pharmacy.",
+	5: "Radio silence for weeks.\nThere's a broadcast tower ahead.\nMaybe I can reach other survivors.",
+	6: "They swarm in larger groups now.\nFound an old police station.\nNeed ammo. Lots of it.",
+	7: "The mutation is spreading.\nFaster, stronger zombies.\nNeed to find a vehicle to keep moving.",
+	8: "Winter is coming.\nNights are freezing.\nNeed to find warm clothes and fuel.",
+	9: "Heard a signal! A military outpost?\nIt's far, through the city center.\nThis will be a tough fight.",
+	10: "The signal was a trap... or a grave.\nNo one is left here.\nI am the last hope. I keep fighting."
+}
+
 func _ready():
 	# 连接到所有僵尸的死亡信号
 	get_tree().node_added.connect(_on_node_added)
@@ -98,8 +112,24 @@ func _ready():
 	var maze_generator = get_tree().get_first_node_in_group("MazeGenerator")
 	if maze_generator:
 		maze_generator.generate_maze()
+	
+	# 显示第一关对话和开始动画
+	start_level_sequence()
 
-	# 第一关也显示 Ready, Go!
+func start_level_sequence():
+	# 暂停游戏
+	get_tree().paused = true
+	
+	# 1. 显示剧情对话
+	var game_ui = get_tree().get_first_node_in_group("GameUI")
+	if game_ui:
+		var dialogue = level_dialogues.get(current_level, "Still alive.\nThe horde never ends.\nMust keep moving.")
+		game_ui.show_dialogue(dialogue)
+		
+		# 等待对话结束
+		await game_ui.dialogue_finished
+	
+	# 2. 显示 Ready, Go!
 	await show_level_start_animation()
 
 func _on_node_added(node: Node):
@@ -142,8 +172,8 @@ func next_level():
 	# 清除所有现存僵尸
 	clear_zombies()
 
-	# 显示 Ready, Go! 动画
-	await show_level_start_animation()
+	# 显示剧情对话和开始动画
+	await start_level_sequence()
 
 func show_level_start_animation():
 	"""显示关卡开始动画：Ready -> Go!"""
