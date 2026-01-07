@@ -3,7 +3,7 @@ extends CharacterBody2D
 signal zombie_killed(points: int)
 
 @export var speed: float = 100.0  # 降低初始速度
-@export var attack_range: float = 20.0
+@export var attack_range: float = 40.0
 @export var damage: float = 10.0
 @export var attack_cooldown: float = 1.0
 @export var score_value: int = 10
@@ -62,6 +62,13 @@ func _physics_process(delta: float) -> void:
 
 		# move_and_slide() automatically handles collision with other CharacterBody2D zombies
 		move_and_slide()
+		
+		# 检查是否撞到了玩家（处理贴脸伤害）
+		for i in get_slide_collision_count():
+			var collision = get_slide_collision(i)
+			if collision.get_collider() == player and can_attack:
+				attack_player()
+				break
 
 		# Face the player
 		look_at(player.global_position)

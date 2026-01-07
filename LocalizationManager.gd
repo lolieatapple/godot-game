@@ -33,7 +33,8 @@ var translations = {
 		"game_over": "游戏结束",
 		"final_score": "最终得分: ",
 		"play_again": "再玩一次",
-		"menu": "返回主菜单"
+		"menu": "返回主菜单",
+		"game_title": "末日幸存者"
 	},
 	"en": {
 		"press_any_key": "- Press Any Key to Start -",
@@ -63,7 +64,8 @@ var translations = {
 		"game_over": "GAME OVER",
 		"final_score": "Final Score: ",
 		"play_again": "Play Again",
-		"menu": "Main Menu"
+		"menu": "Main Menu",
+		"game_title": "ZOMBIE SURVIVOR"
 	}
 }
 

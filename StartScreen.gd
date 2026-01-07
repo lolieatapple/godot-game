@@ -2,6 +2,7 @@ extends Control
 
 func _ready():
 	# 更新文本
+	$TitleLabel.text = LocalizationManager.get_text("game_title")
 	$PressKeyLabel.text = LocalizationManager.get_text("press_any_key")
 	
 	# 简单的闪烁动画
