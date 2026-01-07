@@ -120,4 +120,17 @@ func trigger_damage_effects() -> void:
 
 func die() -> void:
 	print("Game Over")
-	get_tree().reload_current_scene()
+	
+	# Get current score from GameUI
+	var final_score = 0
+	var game_ui = get_tree().get_first_node_in_group("GameUI")
+	if game_ui and "score" in game_ui:
+		final_score = game_ui.score
+	
+	# Show Game Over Screen
+	var game_over_screen = get_tree().get_first_node_in_group("GameOverScreen")
+	if game_over_screen:
+		game_over_screen.show_game_over(final_score)
+	else:
+		# Fallback if screen not found
+		get_tree().reload_current_scene()

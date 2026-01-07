@@ -1,6 +1,9 @@
 extends Control
 
 func _ready():
+	# 更新文本
+	$PressKeyLabel.text = LocalizationManager.get_text("press_any_key")
+	
 	# 简单的闪烁动画
 	var tween = create_tween().set_loops()
 	tween.tween_property($PressKeyLabel, "modulate:a", 0.0, 1.0)

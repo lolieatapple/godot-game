@@ -1,8 +1,27 @@
 extends CanvasLayer
 
+@onready var title_label: Label = $Panel/CenterContainer/VBoxContainer/Title
+@onready var resume_button: Button = $Panel/CenterContainer/VBoxContainer/ResumeButton
+@onready var restart_button: Button = $Panel/CenterContainer/VBoxContainer/RestartButton
+@onready var quit_button: Button = $Panel/CenterContainer/VBoxContainer/QuitButton
+
 func _ready() -> void:
 	# 初始隐藏暂停菜单
 	hide()
+	
+	# 连接语言改变信号
+	LocalizationManager.language_changed.connect(_update_text)
+	_update_text()
+
+func _update_text() -> void:
+	if title_label:
+		title_label.text = LocalizationManager.get_text("paused")
+	if resume_button:
+		resume_button.text = LocalizationManager.get_text("resume")
+	if restart_button:
+		restart_button.text = LocalizationManager.get_text("restart")
+	if quit_button:
+		quit_button.text = LocalizationManager.get_text("quit")
 
 func _input(event: InputEvent) -> void:
 	# 按ESC键切换暂停状态

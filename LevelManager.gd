@@ -86,20 +86,6 @@ var level_colors = {
 	}
 }
 
-# 关卡剧情对话
-var level_dialogues = {
-	1: "Year 2035. The virus took everything.\nI have the antibodies. I must survive.\nFirst, secure this safehouse.",
-	2: "Supplies are running low.\nI saw a grocery store nearby.\nNeed to find food before I starve.",
-	3: "Thirsty... so thirsty.\nThe city water is contaminated.\nMust find bottled water in the warehouse.",
-	4: "Got a nasty cut on my leg.\nInfection risk is high.\nNeed antibiotics from the pharmacy.",
-	5: "Radio silence for weeks.\nThere's a broadcast tower ahead.\nMaybe I can reach other survivors.",
-	6: "They swarm in larger groups now.\nFound an old police station.\nNeed ammo. Lots of it.",
-	7: "The mutation is spreading.\nFaster, stronger zombies.\nNeed to find a vehicle to keep moving.",
-	8: "Winter is coming.\nNights are freezing.\nNeed to find warm clothes and fuel.",
-	9: "Heard a signal! A military outpost?\nIt's far, through the city center.\nThis will be a tough fight.",
-	10: "The signal was a trap... or a grave.\nNo one is left here.\nI am the last hope. I keep fighting."
-}
-
 func _ready():
 	# 连接到所有僵尸的死亡信号
 	get_tree().node_added.connect(_on_node_added)
@@ -123,7 +109,11 @@ func start_level_sequence():
 	# 1. 显示剧情对话
 	var game_ui = get_tree().get_first_node_in_group("GameUI")
 	if game_ui:
-		var dialogue = level_dialogues.get(current_level, "Still alive.\nThe horde never ends.\nMust keep moving.")
+		var story_key = "story_" + str(current_level)
+		if current_level > 10:
+			story_key = "story_endless"
+			
+		var dialogue = LocalizationManager.get_text(story_key)
 		game_ui.show_dialogue(dialogue)
 		
 		# 等待对话结束

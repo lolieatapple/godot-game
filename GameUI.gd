@@ -16,9 +16,16 @@ var damage_fade_speed: float = 2.0
 @onready var dialogue_panel: Panel = $DialoguePanel
 @onready var dialogue_overlay: ColorRect = $DialogueOverlay
 @onready var dialogue_text: RichTextLabel = $DialoguePanel/DialogueText
+@onready var continue_label: Label = $DialoguePanel/ContinueLabel
+@onready var speaker_label: Label = $DialoguePanel/SpeakerLabel
+
 signal dialogue_finished
 
 func _ready() -> void:
+	# 连接语言改变信号
+	LocalizationManager.language_changed.connect(_on_language_changed)
+	_update_ui_text()
+
 	# Connect to player signals
 	var players = get_tree().get_nodes_in_group("Player")
 	if players.size() > 0:
@@ -69,9 +76,23 @@ func _on_player_health_changed(new_health: float, max_health: float) -> void:
 	else:
 		health_bar.modulate = Color.RED
 
+func _on_language_changed():
+	_update_ui_text()
+
+func _update_ui_text():
+	if continue_label:
+		continue_label.text = LocalizationManager.get_text("press_space")
+	if speaker_label:
+		speaker_label.text = LocalizationManager.get_text("survivor")
+	# Refresh current stats display
+	if score_label:
+		score_label.text = LocalizationManager.get_text("score") + str(score)
+	# Other labels are updated via signals from LevelManager usually, 
+	# but we can force refresh if needed or wait for next update.
+
 func _on_zombie_killed(points: int) -> void:
 	score += points
-	score_label.text = "Score: " + str(score)
+	score_label.text = LocalizationManager.get_text("score") + str(score)
 
 func _process(delta: float) -> void:
 	# 伤害遮罩渐隐效果
@@ -95,17 +116,17 @@ func show_damage_effect() -> void:
 func _on_level_changed(level: int) -> void:
 	"""关卡改变时更新显示"""
 	if level_label:
-		level_label.text = "Level: " + str(level)
+		level_label.text = LocalizationManager.get_text("level") + str(level)
 
 func _on_kills_changed(kills: int, required: int) -> void:
 	"""击杀数改变时更新显示"""
 	if kills_label:
-		kills_label.text = "Kills: " + str(kills) + "/" + str(required)
+		kills_label.text = LocalizationManager.get_text("kills") + str(kills) + "/" + str(required)
 
 func _on_level_completed(level: int) -> void:
 	"""关卡完成时显示提示"""
 	if level_complete_label:
-		level_complete_label.text = "Level " + str(level) + " Complete!"
+		level_complete_label.text = LocalizationManager.get_text("level_complete")
 		level_complete_label.visible = true
 
 		# 2秒后隐藏
@@ -115,13 +136,13 @@ func _on_level_completed(level: int) -> void:
 func show_ready_text() -> void:
 	"""显示 Ready 文字"""
 	if start_label:
-		start_label.text = "Ready"
+		start_label.text = LocalizationManager.get_text("ready")
 		start_label.visible = true
 
 func show_go_text() -> void:
 	"""显示 Go! 文字"""
 	if start_label:
-		start_label.text = "Go!"
+		start_label.text = LocalizationManager.get_text("go")
 		start_label.visible = true
 
 func hide_start_text() -> void:
